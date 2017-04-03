@@ -1,0 +1,130 @@
+<!-- Include Editor style. -->
+<link href='https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/css/froala_editor.min.css' rel='stylesheet' type='text/css' />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/css/froala_style.min.css' rel='stylesheet' type='text/css' />
+
+<!-- Include JS file. -->
+<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/js/froala_editor.min.js'></script>
+<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.5.1/js/plugins/image.min.js'></script>
+
+<div class="field">
+    <label class="label">Başlık</label>
+    <p class="control">
+        <input class="input" type="text" id="title" placeholder="Maksimum 145 karakter">
+    </p>
+</div>
+<div class="field">
+    <label class="label">İçerik</label>
+    <p class="control">
+        <textarea class="textarea" id="article" placeholder="Paylaşım içeriği"></textarea>
+    </p>
+</div>
+<div class="field is-grouped">
+    <label class="label">Aktif</label>
+    <p class="control" style="margin-left: .75rem;">
+        <span class="select">
+          <select id="enabled" title="Aktif">
+              <option value="1">Evet</option>
+              <option value="0" selected>Hayır</option>
+          </select>
+        </span>
+    </p>
+    <label class="label">Kategori</label>
+    <p class="control" style="margin-left: .75rem;">
+        <span class="select">
+          <select id="category" title="Kategori">
+              <option value="null" selected>Kategorisiz</option>
+              <?php /** @var \Model\Category $category */
+              foreach ($categories as $category) { ?>
+                  <option value="<?=$category->get('id');?>"><?=$category->get('name');?></option>
+              <?php } ?>
+          </select>
+        </span>
+    </p>
+</div>
+<div class="field">
+    <label class="label">Etiketler</label>
+    <p class="control">
+        <input class="input typeahead" type="text" id="tags" placeholder="Etiket ismi girin ve enterlayın">
+    </p>
+</div>
+<div class="field" style="margin-top: 3rem;">
+    <p class="control" style="margin-top: 15px;"><button id="new" class="button is-primary is-outlined is-fullwidth">Oluştur</button></p>
+</div>
+<script type="text/javascript" src="<?=$root."public/js/typeahead.js";?>"></script>
+<script type="text/javascript" src="<?=$root."public/js/tagsinput.js";?>"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $('textarea').froalaEditor();
+
+        var newButton = $("#new");
+        var titleInput    = $("#title");
+        var articleTextarea    = $("#article");
+        var enabledSelect = $("#enabled");
+        var categorySelect = $("#category");
+        var tagsInput = $("#tags");
+
+        var tagNames = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.whitespace,
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            local: ["<?=implode('", "', $tagList);?>"]
+        });
+        tagNames.initialize();
+
+        tagsInput.tagsinput({
+            trimValue: true,
+            maxChars: 45,
+            typeaheadjs: {
+                source: tagNames.ttAdapter()
+            }
+        });
+
+        var beforeSend = function () {
+            newButton.addClass("is-loading");
+            newButton.blur();
+            titleInput.addClass("is-disabled");
+            articleTextarea.addClass("is-disabled");
+            enabledSelect.addClass("is-disabled");
+            categorySelect.addClass("is-disabled");
+            tagsInput.addClass("is-disabled");
+        };
+
+        var complete = function () {
+            newButton.removeClass("is-loading");
+            titleInput.removeClass("is-disabled");
+            articleTextarea.removeClass("is-disabled");
+            enabledSelect.removeClass("is-disabled");
+            categorySelect.removeClass("is-disabled");
+            tagsInput.removeClass("is-disabled");
+        };
+
+        var error = function () {
+            alert("Başarısız istek sayfayı yenileyin.");
+        };
+
+        var success = function (data) {
+            alert(data._);
+            if (data.success) {
+                window.location = "all";
+            }
+        };
+
+        newButton.click(function () {
+            $.ajax({
+                method: "POST",
+                data: {
+                    title: titleInput.val(),
+                    article: articleTextarea.val(),
+                    category: categorySelect.val(),
+                    enabled: enabledSelect.val(),
+                    tags: tagsInput.val()
+                },
+                cache: false,
+                beforeSend: beforeSend,
+                success: success,
+                error: error,
+                complete: complete
+            });
+        });
+    });
+</script>

@@ -1,0 +1,84 @@
+<div class="notification is-primary">
+    Şifre değişiminden sonra oturum kesintiye uğramayacaktır.
+</div>
+<form id="settings">
+    <div class="field">
+        <label class="label">Yönetici Adı</label>
+        <p class="control">
+            <input class="input is-disabled" type="text" value="<?=$admin;?>">
+        </p>
+    </div>
+    <div class="field">
+        <label class="label">Eski Şifre</label>
+        <p class="control">
+            <input class="input" type="password" id="oldPassword" name="oldPassword" autocomplete="new-password">
+        </p>
+    </div>
+    <div class="field">
+        <label class="label">Yeni Şifre</label>
+        <p class="control">
+            <input class="input" type="password" id="newPassword" name="newPassword" autocomplete="new-password">
+        </p>
+    </div>
+    <div class="field">
+        <label class="label">Yeni Şifre (Tekrar)</label>
+        <p class="control">
+            <input class="input" type="password" id="reNewPassword" autocomplete="new-password">
+        </p>
+    </div>
+</form>
+
+<div class="field" style="margin-top: 3rem;">
+    <p class="control"><button id="update" class="button is-success is-outlined is-fullwidth">Güncelle</button></p>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var oldPasswordInput = $("#oldPassword");
+        var newPasswordInput = $("#newPassword");
+        var renewPasswordInput = $("#reNewPassword");
+        var updateButton = $("#update");
+
+        var beforeSend = function () {
+            updateButton.addClass("is-loading");
+            updateButton.blur();
+            oldPasswordInput.addClass("is-disabled");
+            newPasswordInput.addClass("is-disabled");
+            renewPasswordInput.addClass("is-disabled");
+        };
+
+        var complete = function () {
+            updateButton.removeClass("is-loading");
+            oldPasswordInput.removeClass("is-disabled");
+            newPasswordInput.removeClass("is-disabled");
+            renewPasswordInput.removeClass("is-disabled");
+        };
+
+        var error = function () {
+            alert("Başarısız istek sayfayı yenileyin.");
+        };
+
+        var success = function (data) {
+            alert(data._);
+            if (data.success) {
+                location.reload(true);
+            }
+        };
+
+        updateButton.click(function () {
+            if (newPasswordInput.val() == renewPasswordInput.val() && newPasswordInput.val().length > 5) {
+                $.ajax({
+                    method: "PUT",
+                    data: $("#settings").serialize(),
+                    cache: false,
+                    beforeSend: beforeSend,
+                    success: success,
+                    error: error,
+                    complete: complete
+                });
+            } else {
+                alert("Yeni şifreler eşleşmiyor veya 6 karakterden kısa.");
+            }
+        });
+    });
+</script>

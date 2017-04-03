@@ -1,0 +1,62 @@
+<div class="notification is-danger">
+    Hatasız görüntülemek için bu sayfada ad-block benzeri browser eklentilerini kapatın.
+</div>
+<div class="notification is-warning">
+    Yazıların maksimum uzunluğu 300 karakter şeklindedir. Daha fazla alana ihtiyaç duyuyorsanız,
+    veritabanından yeni kayıt ekleyerek View klasöründe herhangi bir sayfada <span style="font-weight: bold;">$site[$var]</span> şeklinde kullanabilirsiniz.
+</div>
+<form id="settings">
+    <?php foreach ($settings as $name => $value) { ?>
+    <div class="field">
+        <label class="label"><?=$name;?></label>
+        <p class="control">
+            <textarea class="textarea" name="<?=$name;?>"><?=htmlentities($value);?></textarea>
+        </p>
+    </div>
+    <?php } ?>
+</form>
+
+<div class="field" style="margin-top: 3rem;">
+    <p class="control"><button id="update" class="button is-success is-outlined is-fullwidth">Güncelle</button></p>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var elements = $("#<?=implode(', #', array_keys($settings));?>");
+        var updateButton = $("#update");
+
+        var beforeSend = function () {
+            updateButton.addClass("is-loading");
+            updateButton.blur();
+            elements.addClass("is-disabled");
+        };
+
+        var complete = function () {
+            updateButton.removeClass("is-loading");
+            elements.removeClass("is-disabled");
+        };
+
+        var error = function () {
+            alert("Başarısız istek sayfayı yenileyin.");
+        };
+
+        var success = function (data) {
+            alert(data._);
+            if (data.success) {
+                location.reload(true);
+            }
+        };
+
+        updateButton.click(function () {
+            $.ajax({
+                method: "PUT",
+                data: $("#settings").serialize(),
+                cache: false,
+                beforeSend: beforeSend,
+                success: success,
+                error: error,
+                complete: complete
+            });
+        });
+    });
+</script>

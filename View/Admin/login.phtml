@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="tr">
+<head>
+    <?php require $Elements("head"); ?>
+</head>
+<body>
+<section class="hero is-fullheight">
+    <div class="hero-body">
+        <div class="container is-fluid">
+            <div class="columns is-multiline is-mobile">
+                <div class="column is-half is-offset-one-quarter">
+                    <p class="title is-1 has-text-centered"><?=$site["name"];?> | Panel</p>
+                </div>
+                <div class="column is-half is-offset-one-quarter">
+                    <div class="field">
+                        <p class="control has-icon">
+                            <input class="input" type="text" id="username" placeholder="Kullanıcı Adı" autocomplete="new-password" onKeyPress="if (event.keyCode == 13) { password.blur(); return submit.click(); }">
+                            <span class="icon is-small"><i class="fa fa-user"></i></span>
+                        </p>
+                    </div>
+                    <div class="field">
+                        <p class="control has-icon">
+                            <input class="input" type="password" id="password" placeholder="Şifre" autocomplete="new-password" onKeyPress="if (event.keyCode==13) { password.blur(); return submit.click(); }">
+                            <span class="icon is-small"><i class="fa fa-lock"></i></span>
+                        </p>
+                    </div>
+                    <div class="field">
+                        <p class="control">
+                            <button id="submit" class="button is-primary is-outlined">Giriş Yap</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        var username = $("#username");
+        var password = $("#password");
+        var submit   = $("#submit");
+
+        submit.click(function () {
+            $.ajax({
+                method: "POST",
+                data: {
+                    username: username.val(),
+                    password: password.val()
+                },
+                cache: false,
+                beforeSend: function () {
+                    submit.addClass("is-loading");
+                    username.addClass("is-disabled");
+                    password.addClass("is-disabled");
+                    username.removeClass("is-danger");
+                    password.removeClass("is-danger");
+                    submit.blur();
+                },
+                success: function (data) {
+                    if (!data.passwordMatch)
+                        password.addClass("is-danger");
+                    if (!data.usernameExists)
+                        username.addClass("is-danger");
+
+                    if (data.passwordMatch && data.usernameExists) {
+                        window.location = "home";
+                    }
+                },
+                error: function () {
+                    alert("Başarısız istek sayfayı yenileyin.");
+                },
+                complete: function () {
+                    submit.removeClass("is-loading");
+                    username.removeClass("is-disabled");
+                    password.removeClass("is-disabled");
+                }
+            });
+        });
+    });
+</script>
+</html>

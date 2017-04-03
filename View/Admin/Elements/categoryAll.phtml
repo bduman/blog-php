@@ -1,0 +1,25 @@
+<table class="table">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Ad</th>
+        <th>Aktif</th>
+        <th>Vitrin</th>
+        <th>Oluşturulma</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php /** @var \Model\Category $category */
+    foreach ($categories as $category) { ?>
+        <tr>
+            <th><?=$category->get('id');?></th>
+            <td>
+                <a href="<?=$category->get('url')->getFullUrl($adminRoot);?>"><?=$category->get('name');?></a>
+            </td>
+            <td><?=($category->get('enabled')) ? "Evet" : "Hayır";?></td>
+            <td><?=($category->get('showcase')) ? "Evet" : "Hayır";?></td>
+            <td><?=$category->get('created');?></td>
+        </tr>
+    <?php } ?>
+    </tbody>
+</table>

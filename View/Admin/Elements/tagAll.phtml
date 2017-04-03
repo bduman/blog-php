@@ -1,0 +1,19 @@
+<table class="table">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Ad</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php /** @var \Model\Tag $tag */
+    foreach ($tags as $tag) { ?>
+        <tr>
+            <th><?=$tag->get('id');?></th>
+            <td>
+                <a href="<?=$tag->get('url')->getFullUrl($adminRoot);?>"><?=$tag->get('tag');?></a>
+            </td>
+        </tr>
+    <?php } ?>
+    </tbody>
+</table>

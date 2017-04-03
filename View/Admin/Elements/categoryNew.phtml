@@ -1,0 +1,80 @@
+<div class="field">
+    <label class="label">Ad</label>
+    <p class="control">
+        <input class="input" type="text" id="name" placeholder="Maksimum 45 karakter">
+    </p>
+</div>
+<div class="field is-grouped">
+    <label class="label">Aktif</label>
+    <p class="control" style="margin-left: .75rem;">
+        <span class="select">
+          <select id="enabled" title="Aktif">
+              <option value="1">Evet</option>
+              <option value="0" selected>Hayır</option>
+          </select>
+        </span>
+    </p>
+    <label class="label">Vitrin</label>
+    <p class="control" style="margin-left: .75rem;">
+        <span class="select">
+          <select id="showcase" title="Vitrin">
+              <option value="1">Evet</option>
+              <option value="0" selected>Hayır</option>
+          </select>
+        </span>
+    </p>
+</div>
+<div class="field" style="margin-top: 3rem;">
+    <p class="control" style="margin-top: 15px;"><button id="new" class="button is-primary is-outlined is-fullwidth">Oluştur</button></p>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var newButton = $("#new");
+        var nameInput    = $("#name");
+        var enabledSelect = $("#enabled");
+        var showcaseSelect = $("#showcase");
+
+        var beforeSend = function () {
+            newButton.addClass("is-loading");
+            newButton.blur();
+            nameInput.addClass("is-disabled");
+            enabledSelect.addClass("is-disabled");
+            showcaseSelect.addClass("is-disabled");
+        };
+
+        var complete = function () {
+            newButton.removeClass("is-loading");
+            nameInput.removeClass("is-disabled");
+            enabledSelect.removeClass("is-disabled");
+            showcaseSelect.removeClass("is-disabled");
+        };
+
+        var error = function () {
+            alert("Başarısız istek sayfayı yenileyin.");
+        };
+
+        var success = function (data) {
+            alert(data._);
+            if (data.success) {
+                window.location = "all";
+            }
+        };
+
+        newButton.click(function () {
+            $.ajax({
+                method: "POST",
+                data: {
+                    name: nameInput.val(),
+                    enabled: enabledSelect.val(),
+                    showcase: showcaseSelect.val()
+                },
+                cache: false,
+                beforeSend: beforeSend,
+                success: success,
+                error: error,
+                complete: complete
+            });
+        });
+    });
+</script>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <?php require $Elements("head"); ?>
+<meta name="title" content="<?=$site["name"];?>" />
+<meta name="description" content="<?=$site["description"];?>" />
+<meta name="keywords" content="<?=$site["keywords"];?>" />
+</head>
+<body>
+    <?php require $Elements("header"); ?>
+
+    <main role="main">
+        <?php require $Elements("ads"); ?>
+        <?php if (isset($filterName)) { ?>
+            <div class="alert alert-warning" role="alert"><?=$filterName;?></div>
+        <?php } ?>
+        <?php foreach ($posts as $post) { ?>
+            <article>
+                <header>
+                    <h1>
+                        <a href="<?=$post->get("url")->getFullUrl($root);?>"><?=$post->get("title");?></a>
+                    </h1>
+                    <p>
+                        <i class="fa fa-calendar"></i> <?=$post->get("published");?>
+                        <?php if ($post->get('category')) { ?>
+                            <a href="<?=$post->get("category")->get("url")->getFullUrl($root);?>">
+                                <i class="fa fa-folder-open-o"></i> <?=$post->get("category")->get("name");?>
+                            </a>
+                        <?php } ?>
+                    </p>
+                </header>
+                <div class="fr-view"><?=$post->getSummary(500);?></div>
+                <a class="label label-default" href="<?=$post->get("url")->getFullUrl($root);?>">Devamını Oku</a>
+            </article>
+        <?php } ?>
+        <div class="btn-group btn-group-justified" role="group">
+            <div class="btn-group <?=(!$newer["state"]) ? "disabled" : "";?>" role="group">
+                <a href="<?=$root.$filter.$newer["page"];?>" class="btn btn-default <?=(!$newer["state"]) ? "disabled" : "";?>" ><i class="fa fa-arrow-left"></i> Önceki Sayfa</a>
+            </div>
+            <div class="btn-group <?=(!$older["state"]) ? "disabled" : "";?>" role="group">
+                <a href="<?=$root.$filter.$older["page"];?>" class="btn btn-default <?=(!$older["state"]) ? "disabled" : "";?>">Sonraki Sayfa <i class="fa fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </main>
+
+    <?php require $Elements("footer"); ?>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<table class="table">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Başlık</th>
+        <th>Kategori</th>
+        <th>Aktif</th>
+        <th>Oluşturulma</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php /** @var \Model\Post $post */
+    foreach ($posts as $post) { ?>
+        <tr>
+            <th><?=$post->get('id');?></th>
+            <td>
+                <a href="<?=$post->get('url')->getFullUrl($adminRoot);?>"><?=$post->get('title');?></a>
+            </td>
+            <td><?=($post->get('category')) ? $post->get('category')->get('name') : "Kategorisiz";?></td>
+            <td><?=($post->get('enabled')) ? "Evet" : "Hayır";?></td>
+            <td><?=$post->get('published');?></td>
+        </tr>
+    <?php } ?>
+    </tbody>
+</table>

@@ -1,0 +1,117 @@
+<div class="field">
+    <label class="label">ID</label>
+    <p class="control">
+        <input class="input" type="text" value="<?=$category->get('id');?>" disabled="disabled">
+    </p>
+</div>
+<div class="field">
+    <label class="label">URL</label>
+    <p class="control">
+        <input class="input" type="text" value="<?=$category->get('url')->getFullUrl($root);?>" disabled="disabled">
+    </p>
+</div>
+<div class="field">
+    <label class="label">Oluşturulma</label>
+    <p class="control">
+        <input class="input" type="text" value="<?=$category->get('created');?>" disabled="disabled">
+    </p>
+</div>
+<div class="field">
+    <label class="label">Ad</label>
+    <p class="control">
+        <input class="input" type="text" id="name" value="<?=$category->get('name');?>">
+    </p>
+</div>
+<div class="field is-grouped">
+    <label class="label">Aktif</label>
+    <p class="control" style="margin-left: .75rem;">
+        <span class="select">
+          <select id="enabled" title="Aktif">
+              <option value="1" <?=($category->get('enabled')) ? "selected" : "";?>>Evet</option>
+              <option value="0" <?=($category->get('enabled')) ? "" : "selected";?>>Hayır</option>
+          </select>
+        </span>
+    </p>
+    <label class="label">Vitrin</label>
+    <p class="control" style="margin-left: .75rem;">
+        <span class="select">
+          <select id="showcase" title="Vitrin">
+              <option value="1" <?=($category->get('showcase')) ? "selected" : "";?>>Evet</option>
+              <option value="0" <?=($category->get('showcase')) ? "" : "selected";?>>Hayır</option>
+          </select>
+        </span>
+    </p>
+</div>
+<div class="field" style="margin-top: 3rem;">
+    <p class="control"><button id="update" class="button is-success is-outlined is-fullwidth">Güncelle</button></p>
+    <p class="control" style="margin-top: 15px;"><button id="delete" class="button is-danger is-outlined is-fullwidth">Sil</button></p>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var updateButton = $("#update");
+        var deleteButton = $("#delete");
+        var nameInput    = $("#name");
+        var enabledSelect = $("#enabled");
+        var showcaseSelect = $("#showcase");
+
+        var beforeSend = function () {
+            updateButton.addClass("is-loading");
+            updateButton.blur();
+            deleteButton.addClass("is-loading");
+            deleteButton.blur();
+            nameInput.addClass("is-disabled");
+            enabledSelect.addClass("is-disabled");
+            showcaseSelect.addClass("is-disabled");
+        };
+
+        var complete = function () {
+            updateButton.removeClass("is-loading");
+            deleteButton.removeClass("is-loading");
+            nameInput.removeClass("is-disabled");
+            enabledSelect.removeClass("is-disabled");
+            showcaseSelect.removeClass("is-disabled");
+        };
+
+        var error = function () {
+            alert("Başarısız istek sayfayı yenileyin.");
+        };
+
+        var success = function (data) {
+            alert(data._);
+            if (data.success) {
+                location.reload();
+            }
+        };
+        
+        updateButton.click(function () {
+            $.ajax({
+                method: "PUT",
+                data: {
+                    name: nameInput.val(),
+                    enabled: enabledSelect.val(),
+                    showcase: showcaseSelect.val()
+                },
+                cache: false,
+                beforeSend: beforeSend,
+                success: success,
+                error: error,
+                complete: complete
+            });
+        });
+        
+        deleteButton.click(function () {
+            var isOk = confirm("Silinmesi halinde ilişkili yazılar kategorisiz kalacak ve kategori kalıcı olarak silinecek.");
+            if (isOk == true) {
+                $.ajax({
+                    method: "DELETE",
+                    cache: false,
+                    beforeSend: beforeSend,
+                    success: success,
+                    error: error,
+                    complete: complete
+                });
+            }
+        });
+    });
+</script>

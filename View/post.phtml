@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <?php require $Elements("head"); ?>
+<meta name="title" content="<?=$post->get("title");?>" />
+<meta name="description" content="<?=$site["name"];?> blogundan <?=$post->get("title");?> yazısı" />
+<meta name="keywords" content="<?=implode(",", $post->get('hasTags'));?>" />
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="<?=$post->get("title");?>">
+<meta property="og:url" content="<?=$post->get("url")->getFullUrl($root);?>">
+<meta property="og:site_name" content="<?=$site["name"];?>">
+<meta property="og:description" content="<?=$post->getSummary(100);?>">
+<meta property="og:updated_time" content="<?=$post->get("published");?>">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="<?=$post->get("title");?>">
+<meta name="twitter:description" content="<?=$post->getSummary(100);?>">
+</head>
+<body>
+<?php require $Elements("header"); ?>
+
+<main role="main">
+    <?php require $Elements("ads"); ?>
+    <article>
+        <header>
+            <h1><?=$post->get("title");?></h1>
+            <p>
+                <i class="fa fa-calendar"></i> <?=$post->get("published");?>
+                <?php if ($post->get('category')) { ?>
+                <a href="<?=$post->get("category")->get("url")->getFullUrl($root);?>">
+                    <i class="fa fa-folder-open-o"></i> <?=$post->get("category")->get("name");?>
+                </a>
+                <?php } ?>
+            </p>
+        </header>
+        <div class="fr-view"><?=$post->get("article");?></div>
+        <section>
+            <?php
+            $labels = ["primary", "success", "info", "warning", "danger"];
+            
+            foreach ($post->get('hasTags') as $tag) { ?>
+                <a href="<?=$tag->get('url')->getFullUrl($root);?>" class="label tag label-<?=$labels[array_rand($labels)];?>">
+                    <?=$tag->get('tag');?>
+                </a>
+            <?php } ?>
+        </section>
+        <section title="comments">
+            <div id="disqus_thread"></div>
+        </section>
+    </article>
+</main>
+<?php require $Elements("footer"); ?>
+<script type="text/javascript">
+    (function() {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://<?=$site["disqusUsername"];?>.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</body>
+</html>
