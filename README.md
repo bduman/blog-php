@@ -1,3 +1,10 @@
+### Kurulum
+```sh
+composer install
+```
+
+### Açıklama
+
 Mevcut config.php örnektir, öncelikle onu silin. Site.com/public/install adresi üzerinden kurulum yapabilirsiniz.
 Kurulumdan sonra yeniden config.php yazacak ve içinde kurulumda istenen bilgileri girecek.
 
